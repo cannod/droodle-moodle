@@ -176,21 +176,21 @@ class droodle_webservice {
         $enrol = $DB->get_record('enrol', $conditions);
 
         if (!$enrol) {
-            return;
+            return 0;
         }
 
         $conditions = array ('username' => $username);
         $user = $DB->get_record('user', $conditions);
 
         if (!$user) {
-            return;
+            return 0;
         }
 
         $conditions = array ('enrolid' => $enrol->id, 'userid' => $user->id);
         $ue = $DB->get_record('user_enrolments', $conditions);
 
         if (!$ue) {
-            return;
+            return 0;
         }
 
         $instance = $DB->get_record('enrol', array('id' => $ue->enrolid), '*', MUST_EXIST);
