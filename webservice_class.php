@@ -206,32 +206,73 @@ class droodle_webservice {
 
         global $CFG, $DB;
 
-        $username = utf8_decode ($username);
-        $username = strtolower ($username);
+        // Error if username, email or auth not set.
+        if (empty($username) || empty($email) || empty($auth)) {
+            return 0;
+        }
 
-        $conditions = array ('username' => $username);
+        $username = core_text::strtolower($username);
+
+        $conditions = array ('username' => $username, 'mnethostid' => $CFG->mnet_localhost_id);
+
+        // Get a single database record as an object where all the given conditions met.
         $user = $DB->get_record('user', $conditions);
 
         if (!$user) {
-            $user = create_user_record($username, "");
-        }
+  
+            // At this stage we cannot use user_create_user() as it does not allow spaces in username.
+            // So this is code taken from create_user_record() and user_create_user().
+            $newuser = new stdClass();
+            
+            $newuser->username = $username;
+            if (!empty($firstname)) {
+                 $newuser->firstname = $firstname;
+            }
+            if (!empty($lastname)) {
+                 $newuser->lastname = $lastname;
+            }
+            $newuser->email = $email;
+            $newuser->auth = $auth;
+            $newuser->timecreated = time();
+            $newuser->timemodified = $newuser->timecreated;
+            $newuser->mnethostid = $CFG->mnet_localhost_id;
+            $newuser->lang = $CFG->lang;
+            $newuser->city = '';
+            $newuser->confirmed = 1;
 
-        $conditions = array ('id' => $user->id);
-        if ($firstname) {
-            $DB->set_field('user', 'firstname', $firstname, $conditions);
-        }
-        if ($lastname) {
-            $DB->set_field('user', 'lastname', $lastname, $conditions);
-        }
-        if ($email) {
-            $DB->set_field('user', 'email', $email, $conditions);
-        }
-        if ($email) {
-            $DB->set_field('user', 'auth', $auth, $conditions);
-        }
-        /* $DB->set_field('user', 'firstaccess', time (), $conditions); */
+            $newuser = (object) $newuser;
 
-        return 1;
+            // Insert the user into the database.
+            $newuserid = $DB->insert_record('user', $newuser);
+
+            if (empty($newuserid)) {
+                return 0;
+            }
+
+        } else {
+
+            if ($firstname !== $user->firstname) {
+                $user->firstname = $firstname;
+            }
+            if ($lastname !== $user->lastname) {
+                $user->lastname = $lastname;
+            }
+            if ($email !== $user->email) {
+                $user->email = $email;
+            }
+            if ($auth !== $user->auth) {
+                $user->auth = $auth;
+            }
+
+            $result = $DB->update_record('user', $user);
+            
+            if ($result) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+        
     }
 
     function delete_user ($username) {
