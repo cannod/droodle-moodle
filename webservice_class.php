@@ -211,7 +211,8 @@ class droodle_webservice {
             return 0;
         }
 
-        $username = core_text::strtolower($username);
+        //$username = core_text::strtolower($username);
+        $username = strtolower($username);
 
         $conditions = array ('username' => $username, 'mnethostid' => $CFG->mnet_localhost_id);
 
@@ -245,7 +246,9 @@ class droodle_webservice {
             // Insert the user into the database.
             $newuserid = $DB->insert_record('user', $newuser);
 
-            if (empty($newuserid)) {
+            if ($newuserid) {
+                return 1;
+            } else {
                 return 0;
             }
 
