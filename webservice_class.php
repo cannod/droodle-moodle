@@ -246,35 +246,40 @@ class droodle_webservice {
             // Insert the user into the database.
             $newuserid = $DB->insert_record('user', $newuser);
 
-            if ($newuserid) {
-                return 1;
-            } else {
+            if (empty($newuserid)) {
                 return 0;
             }
 
         } else {
 
+            $update = false;
+
             if ($firstname !== $user->firstname) {
                 $user->firstname = $firstname;
+                $update = true;
             }
             if ($lastname !== $user->lastname) {
                 $user->lastname = $lastname;
+                $update = true;
             }
             if ($email !== $user->email) {
                 $user->email = $email;
+                $update = true;
             }
             if ($auth !== $user->auth) {
                 $user->auth = $auth;
+                $update = true;
             }
 
-            $result = $DB->update_record('user', $user);
-            
-            if ($result) {
-                return 1;
-            } else {
-                return 0;
+            if ($update) { 
+                $result = $DB->update_record('user', $user);
+                if (empty($result)) {
+                    return 0;
+                }
             }
         }
+        // All good return success.
+        return 1;
         
     }
 
