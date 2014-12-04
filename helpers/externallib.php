@@ -207,4 +207,157 @@ class droodle_helpers_external extends external_api {
 
         return $id;
     }
+    /* get_cohorts */
+    public static function get_cohorts_parameters() {
+        return new external_function_parameters(
+                        array(
+                        )
+        );
+    }
+
+    public static function get_cohorts_returns() {
+		 return new external_multiple_structure(
+				new external_single_structure(
+					array(
+						'id' => new external_value(PARAM_INT, 'cohort id'),
+						'name' => new external_value(PARAM_TEXT, 'name'),
+					)
+				)
+            );
+    }
+
+    public static function get_cohorts() {
+        global $CFG, $DB;
+ 
+        $params = self::validate_parameters(self::get_cohorts_parameters(), array());
+ 
+		$auth = new droodle_webservice ();
+		$return = $auth->get_cohorts ();
+
+
+        return $return;
+    }
+
+    /* add_cohort */
+    public static function add_cohort_parameters() {
+        return new external_function_parameters(
+                        array(
+                            'name' => new external_value(PARAM_TEXT, 'cohort name'),
+                        )
+        );
+    }
+
+    public static function add_cohort_returns() {
+        return new  external_value(PARAM_INT, 'cohort id');
+    }
+
+    public static function add_cohort($name) {
+        global $CFG, $DB;
+
+        $params = self::validate_parameters(self::add_cohort_parameters(), array('name' => $name));
+
+                $auth = new  droodle_webservice ();
+                $id = $auth->add_cohort ($name);
+
+        return $id;
+    }
+
+   /* update_cohort */
+    public static function update_cohort_parameters() {
+        return new external_function_parameters(
+                        array(
+                            'cohort_id' => new external_value(PARAM_INT, 'cohort id'),
+                            'name' => new external_value(PARAM_TEXT, 'cohort name'),
+                        )
+        );
+    }
+
+    public static function update_cohort_returns() {
+        return new  external_value(PARAM_INT, 'cohort updated');
+    }
+
+    public static function update_cohort($cohort_id, $name) {
+        global $CFG, $DB;
+
+        $params = self::validate_parameters(self::update_cohort_parameters(), array('cohort_id' => $cohort_id, 'name' => $name));
+
+                $auth = new  droodle_webservice ();
+                $id = $auth->update_cohort ($cohort_id, $name);
+
+        return $id;
+    }
+   /* delete_cohort */
+    public static function delete_cohort_parameters() {
+        return new external_function_parameters(
+                        array(
+                            'cohort_id' => new external_value(PARAM_INT, 'cohort id'),
+                        )
+        );
+    }
+
+    public static function delete_cohort_returns() {
+        return new  external_value(PARAM_INT, 'cohort deleted');
+    }
+
+    public static function delete_cohort($cohort_id) {
+        global $CFG, $DB;
+
+        $params = self::validate_parameters(self::delete_cohort_parameters(), array('cohort_id' => $cohort_id));
+
+                $auth = new  droodle_webservice ();
+                $id = $auth->delete_cohort ($cohort_id);
+
+        return $id;
+    }
+
+
+    /* add_cohort_member */
+    public static function add_cohort_member_parameters() {
+        return new external_function_parameters(
+                        array(
+                            'username' => new external_value(PARAM_TEXT, 'username'),
+                            'cohort_id' => new external_value(PARAM_INT, 'cohort id'),
+                        )
+        );
+    }
+
+    public static function add_cohort_member_returns() {
+        return new  external_value(PARAM_INT, 'user added');
+    }
+
+    public static function add_cohort_member($username, $cohort_id) { 
+        global $CFG, $DB;
+ 
+        $params = self::validate_parameters(self::add_cohort_member_parameters(), array('username'=>$username, 'cohort_id' => $cohort_id));
+ 
+		$auth = new  droodle_webservice ();
+		$id = $auth->add_cohort_member ($username, $cohort_id);
+
+        return $id;
+    }
+
+    /* remove_cohort_member */
+    public static function remove_cohort_member_parameters() {
+        return new external_function_parameters(
+                        array(
+                            'username' => new external_value(PARAM_TEXT, 'username'),
+                            'cohort_id' => new external_value(PARAM_INT, 'cohort id'),
+                        )
+        );
+    }
+
+    public static function remove_cohort_member_returns() {
+        return new  external_value(PARAM_INT, 'user added');
+    }
+
+    public static function remove_cohort_member($username, $cohort_id) { 
+        global $CFG, $DB;
+ 
+        $params = self::validate_parameters(self::remove_cohort_member_parameters(), array('username'=>$username, 'cohort_id' => $cohort_id));
+ 
+		$auth = new  droodle_webservice ();
+		$id = $auth->remove_cohort_member ($username, $cohort_id);
+
+        return $id;
+    }
 }

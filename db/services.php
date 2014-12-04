@@ -57,4 +57,47 @@ $functions = array(
         'description' => 'Unenrol user',
         'type'        => 'read',
     ),
+   'droodle_add_cohort_member' => array(
+        'classname'   => 'droodle_helpers_external',
+        'methodname'  => 'add_cohort_member',
+        'classpath'   => 'local/droodle/helpers/externallib.php',
+        'description' => 'Add member to cohort',
+        'type'        => 'read',
+    ),
+   'droodle_remove_cohort_member' => array(
+        'classname'   => 'droodle_helpers_external',
+        'methodname'  => 'remove_cohort_member',
+        'classpath'   => 'local/droodle/helpers/externallib.php',
+        'description' => 'Remove member from cohort',
+        'type'        => 'read',
+    ),
+   'droodle_get_cohorts' => array(
+        'classname'   => 'droodle_helpers_external',
+        'methodname'  => 'get_cohorts',
+        'classpath'   => 'local/droodle/helpers/externallib.php',
+        'description' => 'Get cohorts',
+        'type'        => 'read',
+    ),
+   'droodle_add_cohort' => array(
+        'classname'   => 'droodle_helpers_external',
+        'methodname'  => 'add_cohort',
+        'classpath'   => 'local/droodle/helpers/externallib.php',
+        'description' => 'Add cohort',
+        'type'        => 'read',
+    ),
+   'droodle_delete_cohort' => array(
+        'classname'   => 'droodle_helpers_external',
+        'methodname'  => 'delete_cohort',
+        'classpath'   => 'local/droodle/helpers/externallib.php',
+        'description' => 'Delete cohort',
+        'type'        => 'read',
+    ),
+
+   'droodle_update_cohort' => array(
+        'classname'   => 'droodle_helpers_external',
+        'methodname'  => 'update_cohort',
+        'classpath'   => 'local/droodle/helpers/externallib.php',
+        'description' => 'Update cohort',
+        'type'        => 'read',
+    ),
 );

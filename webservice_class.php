@@ -151,6 +151,11 @@ class droodle_webservice {
             // User already enroled
             // Can be suspended, or maybe enrol time passed
             // Just activate enrolment and set new dates
+            $file = '/tmp/mdl.log';
+            $current = print_r($ue, TRUE);
+             // Write the contents back to the file
+            file_put_contents($file, $current);
+
             $ue->status = 0; // Active.
             $ue->timestart = $timestart;
             $ue->timeend = $timeend;
@@ -344,5 +349,123 @@ class droodle_webservice {
 
         return 1;
 
+    }
+    
+    function get_cohorts ()
+    {
+        global $CFG, $DB;
+
+        $query = "SELECT id, name, description
+          FROM {$CFG->prefix}cohort";
+
+        $cohorts = $DB->get_records_sql($query);
+
+        $rdo = array ();
+        foreach ($cohorts as $cohort)
+        {
+            $c['id'] = $cohort->id;
+            $c['name'] = $cohort->name;
+
+            $rdo[] = $c;
+        }
+
+        return $rdo;
+    }
+
+    function add_cohort ($name)
+    {
+        global $CFG, $DB;
+
+        $context = context_system::instance();
+
+        $cohort = new stdClass();
+        $cohort->name = $name;
+        $cohort->contextid = $context->id;
+        $cohort->component = 'local_droodle';
+
+        $cohort_id = cohort_add_cohort ($cohort);
+
+        return $cohort_id;
+    }
+
+    function delete_cohort ($id)
+    {
+        global $CFG, $DB;
+
+        $context = context_system::instance();
+
+        $cohort = new stdClass();
+        $cohort->id = $id;
+        $cohort->contextid = $context->id;
+
+        cohort_delete_cohort ($cohort);
+
+        return 1;
+    }
+
+
+    function update_cohort ($id, $name)
+    {
+        global $CFG, $DB;
+
+        $context = context_system::instance();
+
+        $cohort = new stdClass();
+        $cohort->id = $id;
+        $cohort->name = $name;
+        $cohort->contextid = $context->id;
+
+        cohort_update_cohort ($cohort);
+
+        return 1; 
+    }
+
+
+
+    function add_cohort_member ($username, $cohort_id)
+    {
+        global $CFG, $DB;
+
+        $username = utf8_decode ($username);
+        $username = strtolower ($username);
+        $conditions = array ('username' => $username);
+        $user = $DB->get_record('user',$conditions);
+
+        if (!$user)
+            return 0;
+
+	$conditions = array ('userid' => $user->id, 'cohortid' => $cohort_id);
+        $member = $DB->get_record('cohort_members',$conditions);
+
+        if ($member)
+            return 1;
+
+
+        cohort_add_member ($cohort_id, $user->id);
+
+        return 1;
+    }
+
+    function remove_cohort_member ($username, $cohort_id)
+    {
+        global $CFG, $DB;
+
+        $username = utf8_decode ($username);
+        $username = strtolower ($username);
+        $conditions = array ('username' => $username);
+        $user = $DB->get_record('user',$conditions);
+
+        if (!$user)
+            return 0;
+
+        $conditions = array ('userid' => $user->id, 'cohortid' => $cohort_id);
+        $member = $DB->get_record('cohort_members',$conditions);
+
+        if (!$member)
+            return 1;
+
+        cohort_remove_member ($cohort_id, $user->id);
+
+        return 1;
     }
 } // End Class.
